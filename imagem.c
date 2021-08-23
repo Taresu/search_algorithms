@@ -1,5 +1,36 @@
 #include "imagem.h"
 
+void Intercala (char A[], char Aux[], int esq, int meio, int dir)
+{
+  
+  int l1 = esq; 
+  int l2 = meio + 1; 
+  int i;
+
+  for (i = esq; l1 <= meio && l2 <= dir; i++){
+      if(A[l1] <= Aux[l2])
+        Aux[i] = A[l1++];
+      else  
+        Aux[i] = A[l2++];
+  }
+
+  while (l1 <= meio) Aux[i++] = A[l1++];
+  while (l2 <= dir) Aux[i++] = A[l2++];
+
+  for (i = esq; i<= dir; i++)
+      A[i] = Aux[i];
+}
+
+void Merge_Sort (char A[], char Aux[], int esq, int dir)
+{
+  if (esq < dir) {
+      int meio = (esq + dir)/2;
+      Merge_Sort (A, Aux, esq, meio);
+      Merge_Sort (A, Aux, meio+1, dir);
+      Intercala (A, Aux, esq, meio, dir);
+  } 
+}
+
 /*Alocando a estrutura da imagem.*/
 Imagem* aloca_imagem (int nlin, int ncol) {
   int i;
@@ -39,7 +70,7 @@ Imagem* Processamento (Imagem *img, int tamanho_da_janela) {
       }
       
       /*Descomente a linha abaixo e adicione o algoritmo de ordenação Merge-Sort aqui.*/
-      //MergeSort (v, vaux, 0, (tamanho_da_janela*tamanho_da_janela)-1); 
+      Merge_Sort (vect, aux, 0, (tamanho_da_janela*tamanho_da_janela)-1); 
     
       /*Preenchendo a imagem de saída:*/ 
       saida->mat[i][j] = vect[(tamanho_da_janela * tamanho_da_janela)/2];
@@ -73,7 +104,7 @@ int main (int argc, char *argv[]) {
 
   /*Processando a imagem:*/
   Imagem *oimg = Processamento (iimg, tamanho_da_janela);
-   
+
   /*Gravando a imagem com o resultado do processamento:*/
   fprintf(fout, "%s\n%d %d\n%d\n", type, oimg->ncol, oimg->nlin, nlevels);
   for (j = 0; j < oimg->nlin; j++) {
